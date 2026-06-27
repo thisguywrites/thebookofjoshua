@@ -174,22 +174,40 @@
 
         .clippy-wrapper:hover .clippy-eyes {
             transform: scale(1.12);
+            transform-origin: bottom right;
         }
 
-        .clippy-eyes.is-blinking .clippy-pupil::after {
+        /* Blink: crossfade to closed-eye image — no src-swap, no flash */
+        .clippy-blink-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 87px;
+            height: auto;
+            display: block;
             opacity: 0;
-            transition: opacity 0s;
+            pointer-events: none;
+            transition: opacity 0.1s ease-in;
+        }
+        .clippy-wrapper.is-blinking .clippy-blink-overlay {
+            opacity: 1;
+        }
+        .clippy-wrapper:not(.is-blinking) .clippy-blink-overlay {
+            transition: opacity 0.12s ease-out;
+        }
+        .clippy-wrapper.is-blinking .clippy-pupil {
+            opacity: 0;
+            transition: opacity 0.08s ease-in;
         }
 
         .clippy-pupil {
             position: absolute;
-            width: 14px;
-            height: 11px;
-            max-width: 14px;
-            max-height: 11px;
+            width: 14px !important;
+            height: 11px !important;
             background-color: #fdfdfd;
             border-radius: 50%;
             transform: translate(-50%, -50%);
+            transition: opacity 0.08s ease-out;
         }
 
         .clippy-pupil::after {
@@ -197,10 +215,8 @@
             position: absolute;
             top: 50%;
             left: 50%;
-            width: 9px;
-            height: 7px;
-            max-width: 9px;
-            max-height: 7px;
+            width: 9px !important;
+            height: 7px !important;
             background-color: #17171a;
             border-radius: 50%;
             transform: translate(calc(-50% + var(--eye-x, 0px)), calc(-50% + var(--eye-y, 0px)));
@@ -426,18 +442,24 @@
             border: 0;
         }
         .video-portrait-row {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 16px;
-            justify-content: center;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 32px;
+            max-width: 500px;
+            margin: 0 auto 60px;
         }
         .video-portrait-wrap {
             position: relative;
-            width: 220px;
-            padding-top: calc(220px * 1.7778);
-            border-radius: 4px;
+            width: 100%;
+            padding-top: 177.78%;
+            border-radius: 20px;
             overflow: hidden;
-            flex-shrink: 0;
+            box-shadow: 0 16px 48px rgba(0,0,0,0.22);
+            transition: transform 0.25s ease, box-shadow 0.25s ease;
+        }
+        .video-portrait-wrap:hover {
+            transform: scale(1.05);
+            box-shadow: 0 20px 56px rgba(0,0,0,0.28);
         }
         .video-portrait-wrap iframe {
             position: absolute;
@@ -446,9 +468,10 @@
             border: 0;
         }
         @media (max-width: 768px) {
-            .video-portrait-wrap {
-                width: 160px;
-                padding-top: calc(160px * 1.7778);
+            .video-portrait-row {
+                gap: 20px;
+                max-width: 360px;
+            }
             }
         }
         .section-label {
@@ -613,46 +636,76 @@
         const clippyOpenSrc = clippyImg.src;
         const clippyClosedSrc = "data:image/webp;base64,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";
 
-        // Pre-load closed-eye image to avoid flash on first blink
-        const preload = new Image();
-        preload.src = clippyClosedSrc;
+        // Inject closed-eye overlay — crossfades over open Clippy on blink
+        const clippyOverlay = document.createElement('img');
+        clippyOverlay.className = 'clippy-blink-overlay';
+        clippyOverlay.src = clippyClosedSrc;
+        clippyOverlay.setAttribute('aria-hidden', 'true');
+        clippyOverlay.alt = '';
+        clippyImg.closest('.clippy-wrapper').appendChild(clippyOverlay);
 
         function blinkClippy() {
-            clippyImg.src = clippyClosedSrc;
-            if (clippyEyes) clippyEyes.classList.add('is-blinking');
+            const wrapper = clippyImg.closest('.clippy-wrapper');
+            if (wrapper) wrapper.classList.add('is-blinking');
+            // 100ms fade-in + 80ms hold = 180ms, then fade-out starts
             setTimeout(() => {
-                clippyImg.src = clippyOpenSrc;
-                if (clippyEyes) clippyEyes.classList.remove('is-blinking');
-            }, 150);
+                if (wrapper) wrapper.classList.remove('is-blinking');
+            }, 180);
         }
 
         setInterval(blinkClippy, 3000);
 
-        // Clippy's eyes follow the cursor
+        // Clippy's eyes follow the cursor — uses setInterval so tracking
+        // continues even when cursor is over an iframe (Vimeo etc.)
         const clippyEyes = document.getElementById('clippy-eyes');
 
         if (clippyEyes) {
-            window.addEventListener('mousemove', (e) => {
+            let lastMouseX = window.innerWidth / 2;
+            let lastMouseY = window.innerHeight / 2;
+
+            function updateEyes() {
                 const rect = clippyEyes.getBoundingClientRect();
                 if (rect.width === 0) return;
-
-                // Aim from roughly the middle of the eyes toward the cursor
                 const originX = rect.left + rect.width * 0.45;
                 const originY = rect.top + rect.height * 0.35;
-
-                const dx = e.clientX - originX;
-                const dy = e.clientY - originY;
+                const dx = lastMouseX - originX;
+                const dy = lastMouseY - originY;
                 const angle = Math.atan2(dy, dx);
-
-                // How far the pupils can drift inside the white of the eye, scaled to Clippy's size
-                const maxOffset = rect.width * 0.019;
-
+                const maxOffset = 1.65;
                 const offsetX = Math.cos(angle) * maxOffset;
                 const offsetY = Math.sin(angle) * maxOffset;
-
                 clippyEyes.style.setProperty('--eye-x', `${offsetX}px`);
                 clippyEyes.style.setProperty('--eye-y', `${offsetY}px`);
+            }
+
+            window.addEventListener('mousemove', (e) => {
+                lastMouseX = e.clientX;
+                lastMouseY = e.clientY;
             });
+
+            // Capture mousemove on iframe parent containers
+            document.querySelectorAll('iframe').forEach(iframe => {
+                // Walk up 3 levels to capture cursor as close to iframe as possible
+                let el = iframe.parentElement;
+                for (let i = 0; i < 3 && el; i++) {
+                    el.addEventListener('mousemove', (e) => {
+                        lastMouseX = e.clientX;
+                        lastMouseY = e.clientY;
+                    });
+                    // When cursor enters the iframe area, point eyes at iframe center
+                    el.addEventListener('mouseleave', () => {
+                        const rect = iframe.getBoundingClientRect();
+                        if (rect.width > 0) {
+                            lastMouseX = rect.left + rect.width / 2;
+                            lastMouseY = rect.top + rect.height / 2;
+                        }
+                    });
+                    el = el.parentElement;
+                }
+            });
+
+            // Keep updating every 50ms so eyes always track
+            setInterval(updateEyes, 50);
         }
     </script>
 </body>
