@@ -434,22 +434,22 @@
         <div class="project-content">
             <div class="video-stack">
                 <div class="video-stack-item">
-                    <iframe src="https://player.vimeo.com/video/1203596319?title=0&byline=0&portrait=0&badge=0&autopause=0&player_id=0&app_id=58479" frameborder="0" allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share" referrerpolicy="strict-origin-when-cross-origin" title="Launch"></iframe>
+                    <iframe src="https://player.vimeo.com/video/1203596319?title=0&byline=0&portrait=0&badge=0&autopause=0&player_id=0&app_id=58479&loop=1" frameborder="0" allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share" referrerpolicy="strict-origin-when-cross-origin" title="Launch"></iframe>
                 </div>
                 <div class="video-stack-item">
-                    <iframe src="https://player.vimeo.com/video/1203596317?title=0&byline=0&portrait=0&badge=0&autopause=0&player_id=0&app_id=58479" frameborder="0" allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share" referrerpolicy="strict-origin-when-cross-origin" title="Good Ol Days"></iframe>
+                    <iframe src="https://player.vimeo.com/video/1203596317?title=0&byline=0&portrait=0&badge=0&autopause=0&player_id=0&app_id=58479&loop=1" frameborder="0" allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share" referrerpolicy="strict-origin-when-cross-origin" title="Good Ol Days"></iframe>
                 </div>
                 <div class="video-stack-item">
-                    <iframe src="https://player.vimeo.com/video/1203596374?title=0&byline=0&portrait=0&badge=0&autopause=0&player_id=0&app_id=58479" frameborder="0" allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share" referrerpolicy="strict-origin-when-cross-origin" title="Ride with Them"></iframe>
+                    <iframe src="https://player.vimeo.com/video/1203596374?title=0&byline=0&portrait=0&badge=0&autopause=0&player_id=0&app_id=58479&loop=1" frameborder="0" allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share" referrerpolicy="strict-origin-when-cross-origin" title="Ride with Them"></iframe>
                 </div>
                 <div class="video-stack-item">
-                    <iframe src="https://player.vimeo.com/video/1203596413?title=0&byline=0&portrait=0&badge=0&autopause=0&player_id=0&app_id=58479" frameborder="0" allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share" referrerpolicy="strict-origin-when-cross-origin" title="The Jam"></iframe>
+                    <iframe src="https://player.vimeo.com/video/1203596413?title=0&byline=0&portrait=0&badge=0&autopause=0&player_id=0&app_id=58479&loop=1" frameborder="0" allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share" referrerpolicy="strict-origin-when-cross-origin" title="The Jam"></iframe>
                 </div>
                 <div class="video-stack-item">
-                    <iframe src="https://player.vimeo.com/video/1203596320?title=0&byline=0&portrait=0&badge=0&autopause=0&player_id=0&app_id=58479" frameborder="0" allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share" referrerpolicy="strict-origin-when-cross-origin" title="Fresh Ink"></iframe>
+                    <iframe src="https://player.vimeo.com/video/1203596320?title=0&byline=0&portrait=0&badge=0&autopause=0&player_id=0&app_id=58479&loop=1" frameborder="0" allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share" referrerpolicy="strict-origin-when-cross-origin" title="Fresh Ink"></iframe>
                 </div>
                 <div class="video-stack-item">
-                    <iframe src="https://player.vimeo.com/video/1203596318?title=0&byline=0&portrait=0&badge=0&autopause=0&player_id=0&app_id=58479" frameborder="0" allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share" referrerpolicy="strict-origin-when-cross-origin" title="Plant Food"></iframe>
+                    <iframe src="https://player.vimeo.com/video/1203596318?title=0&byline=0&portrait=0&badge=0&autopause=0&player_id=0&app_id=58479&loop=1" frameborder="0" allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share" referrerpolicy="strict-origin-when-cross-origin" title="Plant Food"></iframe>
                 </div>
             </div>
         </div>
@@ -471,7 +471,7 @@
         <!-- Footer -->
         <div class="footer-section">
             <div class="footer-links">
-                <a href="https://www.linkedin.com/in/joshua-blanco-546222188" target="_blank">in</a>
+                <a href="https://www.linkedin.com/in/joshua-blanco-546222188/" target="_blank">in</a>
                 <span class="footer-dot">&middot;</span>
                 <a href="mailto:joshua@joshuablanco.com">@</a>
             </div>
@@ -569,7 +569,65 @@
 
             // Keep updating every 50ms so eyes always track
             setInterval(updateEyes, 50);
+            // ── Mobile: touch events update eye tracking ──────────────────
+            document.addEventListener('touchstart', (e) => {
+                if (e.touches.length > 0) {
+                    lastMouseX = e.touches[0].clientX;
+                    lastMouseY = e.touches[0].clientY;
+                }
+            }, { passive: true });
+            document.addEventListener('touchmove', (e) => {
+                if (e.touches.length > 0) {
+                    lastMouseX = e.touches[0].clientX;
+                    lastMouseY = e.touches[0].clientY;
+                }
+            }, { passive: true });
+
+            // ── Mobile: tap Clippy to open/close speech bubble ────────────
+            (function() {
+                const wrapper = clippyImg.closest('.clippy-wrapper');
+                if (!wrapper) return;
+                let bubbleOpen = false;
+
+                // Tap Clippy: toggle bubble
+                wrapper.addEventListener('touchend', (e) => {
+                    e.stopPropagation();
+                    if (bubbleOpen) {
+                        wrapper.classList.remove('touch-bubble-open');
+                        bubbleOpen = false;
+                    } else {
+                        wrapper.classList.add('touch-bubble-open');
+                        bubbleOpen = true;
+                    }
+                }, { passive: true });
+
+                // Tap anywhere else: close bubble
+                document.addEventListener('touchend', () => {
+                    if (bubbleOpen) {
+                        wrapper.classList.remove('touch-bubble-open');
+                        bubbleOpen = false;
+                    }
+                }, { passive: true });
+            })();
         }
     </script>
-</body>
+
+        <!-- Vimeo loop initialiser -->
+        <script>
+        (function() {
+            var script = document.createElement('script');
+            script.src = 'https://player.vimeo.com/api/player.js';
+            script.onload = function() {
+                document.querySelectorAll('iframe[src*="vimeo.com"]').forEach(function(iframe) {
+                    var player = new Vimeo.Player(iframe);
+                    player.ready().then(function() {
+                        player.setLoop(true).catch(function() {});
+                    }).catch(function() {});
+                    player.on('ended', function() { player.play().catch(function() {}); });
+                });
+            };
+            document.head.appendChild(script);
+        })();
+        </script>
+    </body>
 </html>

@@ -431,7 +431,26 @@
                 width: 64px;
             }
         }
-</style>
+        /* "here" link in bio */
+        .bio-here-link {
+            display: inline-block;
+            transition: transform 0.2s ease;
+            transform-origin: center;
+        }
+        .bio-here-link:hover { transform: scale(1.12); }
+        @media (hover: none) {
+            .bio-here-link:active {
+                transform: scale(1.12);
+                transition: transform 0.1s ease;
+            }
+        }
+                /* Prevent widows and orphans in bio */
+        .me-bio {
+            text-wrap: pretty;
+            orphans: 3;
+            widows: 3;
+        }
+        </style>
 </head>
 <body>
     <div class="container">
@@ -463,7 +482,7 @@
         </div>
 
         <div class="me-bio-wrapper">
-            <p class="me-bio me-bio-spacer" aria-hidden="true">The only thing I wanted to be more than a doctor was an artist. So I became a writer instead. Now I'm a Texas-born, New England-bred barroom socialite, chronic gambler and former professional student trying to find the right balance between eating too much halal and not doing enough yoga. Contrary to popular belief, the &ldquo;ua&rdquo; in my name is not silent. Currently my biggest challenge in life is teaching my puppy the floor is not a bathroom. And yes, I know how to fly airplanes. Sort of. Call me if you want my phone to start quacking. Email if you want it to whistle. To see my resume, press <a href="resume.html" style="color:#0000EE;text-decoration:underline;">here</a>.</p>
+            <p class="me-bio me-bio-spacer" aria-hidden="true">The only thing I wanted to be more than a doctor was an artist. So I became a writer instead. Now I'm a Texas-born, New England-bred barroom socialite, chronic gambler and former professional student trying to find the right balance between eating too much halal and not doing enough yoga. Contrary to popular belief, the &ldquo;ua&rdquo; in my name is not silent. Currently my biggest challenge in life is teaching my puppy the floor is not a bathroom. And yes, I know how to fly airplanes. Sort&nbsp;of. Call me if you want my phone to start quacking. Email if you want it to whistle. To see my resume, press&nbsp;<a href="resume.html" style="color:#0000EE;text-decoration:none;">here</a>.</p>
             <p class="me-bio me-bio-typed"><span id="me-bio-text"></span><span class="caret" id="caret-bio" style="display:none;"></span></p>
         </div>
 
@@ -516,7 +535,7 @@
         <!-- Footer -->
         <div class="footer-section">
             <div class="footer-links">
-                <a href="https://www.linkedin.com/in/joshua-blanco-546222188" target="_blank">in</a>
+                <a href="https://www.linkedin.com/in/joshua-blanco-546222188/" target="_blank">in</a>
                 <span class="footer-dot">&middot;</span>
                 <a href="mailto:joshua@joshuablanco.com">@</a>
             </div>
@@ -552,8 +571,8 @@
             const headingText = "Hi, I'm Joshua!";
 
             const bioSegments = [
-                { type: 'text', value: "The only thing I wanted to be more than a doctor was an artist. So I became a writer instead. Now I'm a Texas-born, New England-bred barroom socialite, chronic gambler and former professional student trying to find the right balance between eating too much halal and not doing enough yoga. Contrary to popular belief, the \u201cua\u201d in my name is not silent. Currently my biggest challenge in life is teaching my puppy the floor is not a bathroom. And yes, I know how to fly airplanes. Sort of. Call me if you want my phone to start quacking. Email if you want it to whistle. To see my resume, press " },
-                { type: 'link', value: "here", href: "resume.html", style: "color:#0000EE;text-decoration:underline;" },
+                { type: 'text', value: "The only thing I wanted to be more than a doctor was an artist. So I became a writer instead. Now I'm a Texas-born, New England-bred barroom socialite, chronic gambler and former professional student trying to find the right balance between eating too much halal and not doing enough yoga. Contrary to popular belief, the \u201cua\u201d in my name is not silent. Currently my biggest challenge in life is teaching my puppy the floor is not a bathroom. And yes, I know how to fly airplanes. Sort&nbsp;of. Call me if you want my phone to start quacking. Email if you want it to whistle. To see my resume, press&nbsp;" },
+                { type: 'link', value: "here", href: "resume.html", style: "color:#0000EE;text-decoration:none;" },
                 { type: 'text', value: "." }
             ];
 
@@ -593,6 +612,7 @@
                             currentNode.target = seg.href.startsWith('http') ? '_blank' : '_self';
                             if (seg.style) {
                                 currentNode.style.cssText = seg.style;
+                                if (seg.value === 'here') currentNode.className = 'bio-here-link';
                             } else {
                                 currentNode.style.color = '#000';
                             }
@@ -780,6 +800,46 @@
 
             // Keep updating every 50ms so eyes always track
             setInterval(updateEyes, 50);
+            // ── Mobile: touch events update eye tracking ──────────────────
+            document.addEventListener('touchstart', (e) => {
+                if (e.touches.length > 0) {
+                    lastMouseX = e.touches[0].clientX;
+                    lastMouseY = e.touches[0].clientY;
+                }
+            }, { passive: true });
+            document.addEventListener('touchmove', (e) => {
+                if (e.touches.length > 0) {
+                    lastMouseX = e.touches[0].clientX;
+                    lastMouseY = e.touches[0].clientY;
+                }
+            }, { passive: true });
+
+            // ── Mobile: tap Clippy to open/close speech bubble ────────────
+            (function() {
+                const wrapper = clippyImg.closest('.clippy-wrapper');
+                if (!wrapper) return;
+                let bubbleOpen = false;
+
+                // Tap Clippy: toggle bubble
+                wrapper.addEventListener('touchend', (e) => {
+                    e.stopPropagation();
+                    if (bubbleOpen) {
+                        wrapper.classList.remove('touch-bubble-open');
+                        bubbleOpen = false;
+                    } else {
+                        wrapper.classList.add('touch-bubble-open');
+                        bubbleOpen = true;
+                    }
+                }, { passive: true });
+
+                // Tap anywhere else: close bubble
+                document.addEventListener('touchend', () => {
+                    if (bubbleOpen) {
+                        wrapper.classList.remove('touch-bubble-open');
+                        bubbleOpen = false;
+                    }
+                }, { passive: true });
+            })();
         }
 
         // Stick figure's eyes follow the cursor too

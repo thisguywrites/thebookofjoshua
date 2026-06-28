@@ -384,7 +384,13 @@
                 display: flex;
             }
         }
-    </style>
+            /* Prevent widows and orphans */
+        .project-content p {
+            text-wrap: pretty;
+            orphans: 3;
+            widows: 3;
+        }
+        </style>
 </head>
 <body>
     <div class="container">
@@ -440,13 +446,13 @@
             <p>University of Oklahoma | 08/2011 – 05/2018</p>
             <p style="padding-left:20px;">• Bachelor of Arts in Psychology</p>
             <p style="padding-left:20px;">• Bachelor of Science in Zoology</p>
-            <p style="padding-left:20px; margin-bottom:36px;">• Minors in Creative Writing, General Business & Chemistry</p>
+            <p style="padding-left:20px; margin-bottom:36px;">• Minors in Creative Writing, General Business &amp;&nbsp;Chemistry</p>
 
             <p style="margin-bottom:4px;"><strong>TROPHY CASE</strong></p>
-            <p style="margin-bottom:36px;">Applied Arts・D&AD New Blood・Graphis (x5)・Muse (x5)・NYX (x2)・Vega (x5)</p>
+            <p style="margin-bottom:36px;">Applied Arts・D&AD New Blood・Graphis (x5)・Muse (x5)・NYX&nbsp;(x2)・Vega&nbsp;(x5)</p>
 
             <p style="margin-bottom:4px;"><strong>BRANDS</strong></p>
-            <p>American Express・Chase・ESPN・Google・Hilton・LG・Mountain Dew・NCAA・Nissan・Persil・Philips・Snuggle・UberEats・Waze・Whole Foods・Zillow</p>
+            <p>American Express・Chase・ESPN・Google・Hilton・LG・Mountain Dew・NCAA・Nissan・Persil・Philips・Snuggle・UberEats・Waze・Whole&nbsp;Foods・Zillow</p>
 
         </div>
 
@@ -467,7 +473,7 @@
         <!-- Footer -->
         <div class="footer-section">
             <div class="footer-links">
-                <a href="https://www.linkedin.com/in/joshua-blanco-546222188" target="_blank">in</a>
+                <a href="https://www.linkedin.com/in/joshua-blanco-546222188/" target="_blank">in</a>
                 <span class="footer-dot">&middot;</span>
                 <a href="mailto:joshua@joshuablanco.com">@</a>
             </div>
@@ -565,6 +571,46 @@
 
             // Keep updating every 50ms so eyes always track
             setInterval(updateEyes, 50);
+            // ── Mobile: touch events update eye tracking ──────────────────
+            document.addEventListener('touchstart', (e) => {
+                if (e.touches.length > 0) {
+                    lastMouseX = e.touches[0].clientX;
+                    lastMouseY = e.touches[0].clientY;
+                }
+            }, { passive: true });
+            document.addEventListener('touchmove', (e) => {
+                if (e.touches.length > 0) {
+                    lastMouseX = e.touches[0].clientX;
+                    lastMouseY = e.touches[0].clientY;
+                }
+            }, { passive: true });
+
+            // ── Mobile: tap Clippy to open/close speech bubble ────────────
+            (function() {
+                const wrapper = clippyImg.closest('.clippy-wrapper');
+                if (!wrapper) return;
+                let bubbleOpen = false;
+
+                // Tap Clippy: toggle bubble
+                wrapper.addEventListener('touchend', (e) => {
+                    e.stopPropagation();
+                    if (bubbleOpen) {
+                        wrapper.classList.remove('touch-bubble-open');
+                        bubbleOpen = false;
+                    } else {
+                        wrapper.classList.add('touch-bubble-open');
+                        bubbleOpen = true;
+                    }
+                }, { passive: true });
+
+                // Tap anywhere else: close bubble
+                document.addEventListener('touchend', () => {
+                    if (bubbleOpen) {
+                        wrapper.classList.remove('touch-bubble-open');
+                        bubbleOpen = false;
+                    }
+                }, { passive: true });
+            })();
         }
     </script>
 </body>

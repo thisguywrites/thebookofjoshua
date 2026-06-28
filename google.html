@@ -434,13 +434,13 @@
         <div class="project-content">
             <div class="video-stack">
                 <div class="video-stack-item">
-                    <iframe src="https://player.vimeo.com/video/1203659379?h=3b1200efe1&title=0&byline=0&portrait=0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen title="jag_education_beaver_16x9_251017b"></iframe>
+                    <iframe src="https://player.vimeo.com/video/1203659379?h=3b1200efe1&title=0&byline=0&portrait=0&loop=1" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen title="jag_education_beaver_16x9_251017b"></iframe>
                 </div>
                 <div class="video-stack-item">
-                    <iframe src="https://player.vimeo.com/video/1203659412?h=c248f105a0&title=0&byline=0&portrait=0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen title="Search_Education_AIM_GreatExchange_15s"></iframe>
+                    <iframe src="https://player.vimeo.com/video/1203659412?h=c248f105a0&title=0&byline=0&portrait=0&loop=1" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen title="Search_Education_AIM_GreatExchange_15s"></iframe>
                 </div>
                 <div class="video-stack-item">
-                    <iframe src="https://player.vimeo.com/video/1203659449?h=8ad1b3ad3a&title=0&byline=0&portrait=0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen title="Search_Education_AIM_MoneyTalks_15s"></iframe>
+                    <iframe src="https://player.vimeo.com/video/1203659449?h=8ad1b3ad3a&title=0&byline=0&portrait=0&loop=1" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen title="Search_Education_AIM_MoneyTalks_15s"></iframe>
                 </div>
             </div>
 
@@ -463,7 +463,7 @@
         <!-- Footer -->
         <div class="footer-section">
             <div class="footer-links">
-                <a href="https://www.linkedin.com/in/joshua-blanco-546222188" target="_blank">in</a>
+                <a href="https://www.linkedin.com/in/joshua-blanco-546222188/" target="_blank">in</a>
                 <span class="footer-dot">&middot;</span>
                 <a href="mailto:joshua@joshuablanco.com">@</a>
             </div>
@@ -561,7 +561,65 @@
 
             // Keep updating every 50ms so eyes always track
             setInterval(updateEyes, 50);
+            // ── Mobile: touch events update eye tracking ──────────────────
+            document.addEventListener('touchstart', (e) => {
+                if (e.touches.length > 0) {
+                    lastMouseX = e.touches[0].clientX;
+                    lastMouseY = e.touches[0].clientY;
+                }
+            }, { passive: true });
+            document.addEventListener('touchmove', (e) => {
+                if (e.touches.length > 0) {
+                    lastMouseX = e.touches[0].clientX;
+                    lastMouseY = e.touches[0].clientY;
+                }
+            }, { passive: true });
+
+            // ── Mobile: tap Clippy to open/close speech bubble ────────────
+            (function() {
+                const wrapper = clippyImg.closest('.clippy-wrapper');
+                if (!wrapper) return;
+                let bubbleOpen = false;
+
+                // Tap Clippy: toggle bubble
+                wrapper.addEventListener('touchend', (e) => {
+                    e.stopPropagation();
+                    if (bubbleOpen) {
+                        wrapper.classList.remove('touch-bubble-open');
+                        bubbleOpen = false;
+                    } else {
+                        wrapper.classList.add('touch-bubble-open');
+                        bubbleOpen = true;
+                    }
+                }, { passive: true });
+
+                // Tap anywhere else: close bubble
+                document.addEventListener('touchend', () => {
+                    if (bubbleOpen) {
+                        wrapper.classList.remove('touch-bubble-open');
+                        bubbleOpen = false;
+                    }
+                }, { passive: true });
+            })();
         }
     </script>
-</body>
+
+        <!-- Vimeo loop initialiser -->
+        <script>
+        (function() {
+            var script = document.createElement('script');
+            script.src = 'https://player.vimeo.com/api/player.js';
+            script.onload = function() {
+                document.querySelectorAll('iframe[src*="vimeo.com"]').forEach(function(iframe) {
+                    var player = new Vimeo.Player(iframe);
+                    player.ready().then(function() {
+                        player.setLoop(true).catch(function() {});
+                    }).catch(function() {});
+                    player.on('ended', function() { player.play().catch(function() {}); });
+                });
+            };
+            document.head.appendChild(script);
+        })();
+        </script>
+    </body>
 </html>

@@ -473,7 +473,7 @@
         <!-- Footer -->
         <div class="footer-section">
             <div class="footer-links">
-                <a href="https://www.linkedin.com/in/joshua-blanco-546222188" target="_blank">in</a>
+                <a href="https://www.linkedin.com/in/joshua-blanco-546222188/" target="_blank">in</a>
                 <span class="footer-dot">&middot;</span>
                 <a href="mailto:joshua@joshuablanco.com">@</a>
             </div>
@@ -572,6 +572,46 @@
 
             // Keep updating every 50ms so eyes always track
             setInterval(updateEyes, 50);
+            // ── Mobile: touch events update eye tracking ──────────────────
+            document.addEventListener('touchstart', (e) => {
+                if (e.touches.length > 0) {
+                    lastMouseX = e.touches[0].clientX;
+                    lastMouseY = e.touches[0].clientY;
+                }
+            }, { passive: true });
+            document.addEventListener('touchmove', (e) => {
+                if (e.touches.length > 0) {
+                    lastMouseX = e.touches[0].clientX;
+                    lastMouseY = e.touches[0].clientY;
+                }
+            }, { passive: true });
+
+            // ── Mobile: tap Clippy to open/close speech bubble ────────────
+            (function() {
+                const wrapper = clippyImg.closest('.clippy-wrapper');
+                if (!wrapper) return;
+                let bubbleOpen = false;
+
+                // Tap Clippy: toggle bubble
+                wrapper.addEventListener('touchend', (e) => {
+                    e.stopPropagation();
+                    if (bubbleOpen) {
+                        wrapper.classList.remove('touch-bubble-open');
+                        bubbleOpen = false;
+                    } else {
+                        wrapper.classList.add('touch-bubble-open');
+                        bubbleOpen = true;
+                    }
+                }, { passive: true });
+
+                // Tap anywhere else: close bubble
+                document.addEventListener('touchend', () => {
+                    if (bubbleOpen) {
+                        wrapper.classList.remove('touch-bubble-open');
+                        bubbleOpen = false;
+                    }
+                }, { passive: true });
+            })();
         }
     </script>
 </body>
