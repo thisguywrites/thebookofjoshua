@@ -521,6 +521,15 @@
             });
 
             markVisited();
+
+            // Browsers restore this page from the back-forward cache (bfcache)
+            // when navigating back via browser history, which skips re-running
+            // scripts. Re-apply the strikethroughs whenever the page is shown.
+            window.addEventListener('pageshow', (event) => {
+                if (event.persisted) {
+                    markVisited();
+                }
+            });
         })();
 
         const text = "COPYWRITER";
