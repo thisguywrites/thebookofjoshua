@@ -471,9 +471,11 @@
         <!-- Footer -->
         <div class="footer-section">
             <div class="footer-links">
+                <a href="mailto:joshua@joshuablanco.com">@</a>
+                <span class="footer-dot">&middot;</span>
                 <a href="https://www.linkedin.com/in/joshua-blanco-546222188/" target="_blank">in</a>
                 <span class="footer-dot">&middot;</span>
-                <a href="mailto:joshua@joshuablanco.com">@</a>
+                <a href="me.html">?</a>
             </div>
         </div>
 
@@ -516,7 +518,8 @@
             }, 180);
         }
 
-        setInterval(blinkClippy, 3000);
+        // Blink disabled
+        // setInterval(blinkClippy, 3000);
 
         // Clippy's eyes follow the cursor — uses setInterval so tracking
         // continues even when cursor is over an iframe (Vimeo etc.)
@@ -618,12 +621,27 @@
             var script = document.createElement('script');
             script.src = 'https://player.vimeo.com/api/player.js';
             script.onload = function() {
+                var players = [];
                 document.querySelectorAll('iframe[src*="vimeo.com"]').forEach(function(iframe) {
                     var player = new Vimeo.Player(iframe);
+                    players.push(player);
+
                     player.ready().then(function() {
                         player.setLoop(true).catch(function() {});
+                        player.pause().catch(function() {});
                     }).catch(function() {});
+
                     player.on('ended', function() { player.play().catch(function() {}); });
+
+                    // When this video plays, pause every other video and reset to thumbnail
+                    player.on('play', function() {
+                        players.forEach(function(other) {
+                            if (other !== player) {
+                                other.pause().catch(function() {});
+                                other.setCurrentTime(0).catch(function() {});
+                            }
+                        });
+                    });
                 });
             };
             document.head.appendChild(script);

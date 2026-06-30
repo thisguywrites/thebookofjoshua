@@ -437,10 +437,10 @@
             transition: transform 0.2s ease;
             transform-origin: center;
         }
-        .bio-here-link:hover { transform: scale(1.12); }
+        .bio-here-link:hover { transform: scale(1.05); }
         @media (hover: none) {
             .bio-here-link:active {
-                transform: scale(1.12);
+                transform: scale(1.05);
                 transition: transform 0.1s ease;
             }
         }
@@ -482,7 +482,7 @@
         </div>
 
         <div class="me-bio-wrapper">
-            <p class="me-bio me-bio-spacer" aria-hidden="true">The only thing I wanted to be more than a doctor was an artist. So I became a writer instead. Now I'm a Texas-born, New England-bred barroom socialite, chronic gambler and former professional student trying to find the right balance between eating too much halal and not doing enough yoga. Contrary to popular belief, the &ldquo;ua&rdquo; in my name is not silent. Currently my biggest challenge in life is teaching my puppy the floor is not a bathroom. And yes, I know how to fly airplanes. Sort&nbsp;of. Call me if you want my phone to start quacking. Email if you want it to whistle. To see my resume, press&nbsp;<a href="resume.html" style="color:#0000EE;text-decoration:none;">here</a>.</p>
+            <p class="me-bio me-bio-spacer" aria-hidden="true">The only thing I wanted to be more than a doctor was an artist. So I became a writer instead. Now I'm a Texas-born, New England-bred barroom socialite, chronic gambler and former <a href="https://tojoshuablanco.wixsite.com/student" style="color:#0000EE;text-decoration:none;" class="bio-here-link">professional student</a> trying to find the right balance between eating too much halal and not doing enough yoga. Contrary to popular belief, the &ldquo;ua&rdquo; in my name is not silent. Currently my biggest challenge in life is teaching my puppy the floor is not a bathroom. And yes, I know how to fly airplanes. Sort of. Call me if you want my phone to start quacking. Email if you want it to whistle. To see my resume, press&nbsp;<a href="resume.html" style="color:#0000EE;text-decoration:none;">here</a>.</p>
             <p class="me-bio me-bio-typed"><span id="me-bio-text"></span><span class="caret" id="caret-bio" style="display:none;"></span></p>
         </div>
 
@@ -535,9 +535,11 @@
         <!-- Footer -->
         <div class="footer-section">
             <div class="footer-links">
+                <a href="mailto:joshua@joshuablanco.com">@</a>
+                <span class="footer-dot">&middot;</span>
                 <a href="https://www.linkedin.com/in/joshua-blanco-546222188/" target="_blank">in</a>
                 <span class="footer-dot">&middot;</span>
-                <a href="mailto:joshua@joshuablanco.com">@</a>
+                <a href="me.html">?</a>
             </div>
         </div>
 
@@ -571,8 +573,10 @@
             const headingText = "Hi, I'm Joshua!";
 
             const bioSegments = [
-                { type: 'text', value: "The only thing I wanted to be more than a doctor was an artist. So I became a writer instead. Now I'm a Texas-born, New England-bred barroom socialite, chronic gambler and former professional student trying to find the right balance between eating too much halal and not doing enough yoga. Contrary to popular belief, the \u201cua\u201d in my name is not silent. Currently my biggest challenge in life is teaching my puppy the floor is not a bathroom. And yes, I know how to fly airplanes. Sort&nbsp;of. Call me if you want my phone to start quacking. Email if you want it to whistle. To see my resume, press&nbsp;" },
-                { type: 'link', value: "here", href: "resume.html", style: "color:#0000EE;text-decoration:none;" },
+                { type: 'text', value: "The only thing I wanted to be more than a doctor was an artist. So I became a writer instead. Now I'm a Texas-born, New England-bred barroom socialite, chronic gambler and former " },
+                { type: 'link', value: "professional student", href: "https://tojoshuablanco.wixsite.com/student", style: "color:#0000EE;text-decoration:none;", className: "bio-here-link" },
+                { type: 'text', value: " trying to find the right balance between eating too much halal and not doing enough yoga. Contrary to popular belief, the \u201cua\u201d in my name is not silent. Currently my biggest challenge in life is teaching my puppy the floor is not a bathroom. And yes, I know how to fly airplanes. Sort of. Call me if you want my phone to start quacking. Email if you want it to whistle. To see my resume, press " },
+                { type: 'link', value: "here", href: "resume.html", style: "color:#0000EE;text-decoration:none;", className: "bio-here-link" },
                 { type: 'text', value: "." }
             ];
 
@@ -612,7 +616,7 @@
                             currentNode.target = seg.href.startsWith('http') ? '_blank' : '_self';
                             if (seg.style) {
                                 currentNode.style.cssText = seg.style;
-                                if (seg.value === 'here') currentNode.className = 'bio-here-link';
+                                if (seg.className) currentNode.className = seg.className;
                             } else {
                                 currentNode.style.color = '#000';
                             }
@@ -667,7 +671,7 @@
                             const a = document.createElement('a');
                             a.href = seg.href;
                             a.target = seg.href.startsWith('http') ? '_blank' : '_self';
-                            if (seg.style) { a.style.cssText = seg.style; } else { a.style.color = '#000'; }
+                            if (seg.style) { a.style.cssText = seg.style; if (seg.className) a.className = seg.className; } else { a.style.color = '#000'; }
                             a.textContent = seg.value;
                             bioTarget.appendChild(a);
                         } else {
@@ -747,7 +751,8 @@
             }, 180);
         }
 
-        setInterval(blinkClippy, 3000);
+        // Blink disabled
+        // setInterval(blinkClippy, 3000);
 
         // Clippy's eyes follow the cursor — uses setInterval so tracking
         // continues even when cursor is over an iframe (Vimeo etc.)

@@ -539,7 +539,7 @@
             gap: 24px;
             justify-content: center;
             flex-wrap: wrap;
-            margin-bottom: 0;
+            margin-bottom: 32px;
         }
         .media-row img.image-portrait {
             width: 200px;
@@ -668,6 +668,8 @@
                 </div>
                 <img class="image-portrait" src="images/heisman-yard-sale/bigal-almost-there.png" alt="Almost There - Bryce Young signed Big Al plush giveaway">
                 <img class="image-portrait" src="images/heisman-yard-sale/bigal-got-it.png" alt="Got It - Bryce Young signed Big Al plush giveaway">
+            </div>
+            <div class="media-row">
                 <div class="video-portrait">
                     <iframe src="https://player.vimeo.com/video/1203103284?title=0&byline=0&portrait=0&badge=0&autopause=0&player_id=0&app_id=58479&loop=1" allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share" referrerpolicy="strict-origin-when-cross-origin" title="01 - YardSaleBoomer_9x16_Unslated_mp4_MASTER"></iframe>
                 </div>
@@ -777,9 +779,11 @@
         <!-- Footer -->
         <div class="footer-section">
             <div class="footer-links">
+                <a href="mailto:joshua@joshuablanco.com">@</a>
+                <span class="footer-dot">&middot;</span>
                 <a href="https://www.linkedin.com/in/joshua-blanco-546222188/" target="_blank">in</a>
                 <span class="footer-dot">&middot;</span>
-                <a href="mailto:joshua@joshuablanco.com">@</a>
+                <a href="me.html">?</a>
             </div>
         </div>
 
@@ -822,7 +826,8 @@
             }, 180);
         }
 
-        setInterval(blinkClippy, 3000);
+        // Blink disabled
+        // setInterval(blinkClippy, 3000);
 
         // Clippy's eyes follow the cursor — uses setInterval so tracking
         // continues even when cursor is over an iframe (Vimeo etc.)
@@ -925,12 +930,27 @@
             var script = document.createElement('script');
             script.src = 'https://player.vimeo.com/api/player.js';
             script.onload = function() {
+                var players = [];
                 document.querySelectorAll('iframe[src*="vimeo.com"]').forEach(function(iframe) {
                     var player = new Vimeo.Player(iframe);
+                    players.push(player);
+
                     player.ready().then(function() {
                         player.setLoop(true).catch(function() {});
+                        player.pause().catch(function() {});
                     }).catch(function() {});
+
                     player.on('ended', function() { player.play().catch(function() {}); });
+
+                    // When this video plays, pause every other video and reset to thumbnail
+                    player.on('play', function() {
+                        players.forEach(function(other) {
+                            if (other !== player) {
+                                other.pause().catch(function() {});
+                                other.setCurrentTime(0).catch(function() {});
+                            }
+                        });
+                    });
                 });
             };
             document.head.appendChild(script);
