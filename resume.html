@@ -308,11 +308,17 @@
         /* Responsive */
         @media (max-width: 768px) {
             .header-section h1 {
-                font-size: 52px;
+                font-size: 46px;
             }
 
             .header-section .subtitle {
                 font-size: 26px;
+            }
+
+            /* Overrides the inline font-size so job title/date lines keep
+               matching desktop's one-line layout instead of wrapping. */
+            .project-content {
+                font-size: 11px !important;
             }
 
             .clippy-wrapper {
