@@ -677,6 +677,47 @@
                 z-index: 50 !important;
                 box-shadow: 0 10px 28px rgba(0,0,0,0.28);
             }
+
+            /* UberEats: 3 fixed 200px columns forced horizontal overflow on
+               mobile; let the grid's own fr columns size them instead. */
+            .ubereats-grid-3x2 {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 8px;
+            }
+            .ubereats-grid-3x2 .ubereats-portrait-item,
+            .ubereats-row .ubereats-portrait-item {
+                width: 100%;
+            }
+            /* Match the reference order: chicken wings/pizza/hot dogs/nachos
+               before tebow/rgiii/albert/bruiser. */
+            .ubereats-grid-3x2 .ubereats-portrait-item:nth-child(5) { order: 6; }
+            .ubereats-grid-3x2 .ubereats-portrait-item:nth-child(6) { order: 5; }
+
+            /* Stack the 2 delivery videos on their own row, fanned out like
+               the Zillow portrait videos, instead of stacked full-width. */
+            .ubereats-row {
+                gap: 0;
+                padding: 32px 20px;
+                margin-bottom: 0;
+            }
+            .ubereats-row .ubereats-portrait-item {
+                width: calc(50% - 8px);
+                margin: -10px -18px;
+                box-shadow: 0 6px 18px rgba(0,0,0,0.22);
+                transition: transform 0.3s ease, box-shadow 0.3s ease, z-index 0s;
+            }
+            .ubereats-row .ubereats-portrait-item:nth-child(2n+1) { transform: rotate(-6deg); }
+            .ubereats-row .ubereats-portrait-item:nth-child(2n+2) { transform: rotate(4deg); }
+            .ubereats-row .ubereats-portrait-item:hover {
+                transform: rotate(0deg) scale(1.15) !important;
+                z-index: 50 !important;
+                box-shadow: 0 10px 28px rgba(0,0,0,0.28);
+            }
+
+            /* Match all section header sizes to the page's main h1. */
+            .section-label {
+                font-size: 30px;
+            }
         }
     </style>
 </head>
