@@ -231,7 +231,14 @@
             transition: opacity 0.25s ease, transform 0.25s ease, visibility 0.25s;
         }
 
-        .clippy-wrapper:hover .speech-bubble {
+        @media (hover: hover) {
+            .clippy-wrapper:hover .speech-bubble {
+                opacity: 1;
+                visibility: visible;
+                transform: translateY(0);
+            }
+        }
+        .clippy-wrapper.touch-bubble-open .speech-bubble {
             opacity: 1;
             visibility: visible;
             transform: translateY(0);
