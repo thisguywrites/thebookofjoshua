@@ -275,16 +275,9 @@
         /* Responsive */
         @media (max-width: 768px) {
 
-            /* Floating over running text on narrow screens made it overlap
-               the bio copy, so on mobile it docks in-flow after the awards
-               instead of following the scroll. */
             .clippy-wrapper {
-                position: relative;
-                bottom: auto;
-                right: auto;
-                display: flex;
-                justify-content: center;
-                margin: 40px 0 0;
+                bottom: 70px;
+                right: 4%;
             }
 
             .clipart {
@@ -448,16 +441,11 @@
                 max-width: 280px;
             }
             .me-awards {
-                row-gap: 20px;
+                row-gap: 24px;
                 max-width: 100%;
             }
-            .me-awards-row {
-                flex-wrap: wrap;
-                justify-content: center;
-                gap: 14px;
-            }
             .me-awards img {
-                width: 88px;
+                width: 64px;
             }
         }
         /* "here" link in bio */
