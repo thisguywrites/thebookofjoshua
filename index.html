@@ -380,9 +380,16 @@
                 width: calc(var(--strike-w) * 0.82);
             }
 
+            /* Floating over running text on narrow screens made it overlap
+               the page copy, so on mobile it docks in-flow after the content
+               instead of following the scroll. */
             .clippy-wrapper {
-                bottom: 70px;
-                right: 4%;
+                position: relative;
+                bottom: auto;
+                right: auto;
+                display: flex;
+                justify-content: center;
+                margin: 40px 0 0;
             }
 
             .clipart {

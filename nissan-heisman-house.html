@@ -275,9 +275,16 @@
         /* Responsive */
         @media (max-width: 768px) {
 
+            /* Floating over running text on narrow screens made it overlap
+               the page copy, so on mobile it docks in-flow after the content
+               instead of following the scroll. */
             .clippy-wrapper {
-                bottom: 70px;
-                right: 4%;
+                position: relative;
+                bottom: auto;
+                right: auto;
+                display: flex;
+                justify-content: center;
+                margin: 40px 0 0;
             }
 
             .clipart {
@@ -611,6 +618,19 @@
                 height: 360px;
                 margin-right: 0;
                 display: block;
+            }
+            /* The UberEats portrait cards were a fixed 200px, which forced
+               horizontal overflow/scrolling on narrow screens. Shrink them
+               so 3 columns fit within the viewport. */
+            .ubereats-portrait-item {
+                width: 100px;
+            }
+            .ubereats-grid-3x2 {
+                grid-template-columns: repeat(3, 100px);
+                gap: 12px;
+            }
+            .ubereats-row {
+                gap: 12px;
             }
         }
     </style>

@@ -315,9 +315,16 @@
                 font-size: 26px;
             }
 
+            /* Floating over running text on narrow screens made it overlap
+               the page copy, so on mobile it docks in-flow after the content
+               instead of following the scroll. */
             .clippy-wrapper {
-                bottom: 70px;
-                right: 4%;
+                position: relative;
+                bottom: auto;
+                right: auto;
+                display: flex;
+                justify-content: center;
+                margin: 40px 0 0;
             }
 
             .clipart {
@@ -449,7 +456,7 @@
             <p style="padding-left:20px; margin-bottom:36px;">• Minors in Creative Writing, General Business &amp;&nbsp;Chemistry</p>
 
             <p style="margin-bottom:4px;"><strong>TROPHY CASE</strong></p>
-            <p style="margin-bottom:36px;">Applied Arts・D&AD New Blood・<span style="white-space:nowrap;">Graphis&nbsp;(x5)・</span><br>Muse&nbsp;(x5)・NYX&nbsp;(x2)・Vega&nbsp;(x5)</p>
+            <p style="margin-bottom:36px;">Applied Arts・<span style="white-space:nowrap;">D&AD New Blood</span>・<span style="white-space:nowrap;">Graphis&nbsp;(x5)・</span><br>Muse&nbsp;(x5)・NYX&nbsp;(x2)・Vega&nbsp;(x5)</p>
 
             <p style="margin-bottom:4px;"><strong>BRANDS</strong></p>
             <p>American Express・Chase・ESPN・Google・Hilton・LG・<span style="white-space:nowrap;">Mountain&nbsp;Dew・NCAA</span>・Nissan・Persil・Philips・Snuggle・UberEats・Waze・Whole&nbsp;Foods・Zillow</p>
