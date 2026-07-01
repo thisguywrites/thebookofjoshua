@@ -583,6 +583,11 @@
             gap: 16px;
             margin-bottom: 24px;
         }
+        /* Invisible to layout on desktop: the two images act as direct flex
+           children of .media-row, exactly as if this wrapper didn't exist. */
+        .yard-sale-images {
+            display: contents;
+        }
 
         @media (max-width: 768px) {
             .project-header h1 {
@@ -606,9 +611,13 @@
                 margin-right: 0;
                 display: block;
             }
-            /* Yard Sale: video full-width, then its two images side by side
-               underneath (matches the reference layout), instead of all
-               three stacked full-width. */
+            /* Yard Sale: video alone on its own row, then its two images
+               side by side in the row underneath (matches the reference
+               layout), instead of all three sharing flex-wrap rows. */
+            .media-row {
+                flex-direction: column;
+                align-items: center;
+            }
             .media-row .video-portrait {
                 width: calc(50% - 8px);
                 height: auto;
@@ -616,6 +625,12 @@
                 padding-top: 0;
                 margin-right: 0;
                 display: block;
+            }
+            .yard-sale-images {
+                display: flex;
+                width: 100%;
+                gap: 16px;
+                justify-content: center;
             }
             .media-row img.image-portrait {
                 width: calc(50% - 8px);
@@ -694,15 +709,19 @@
                 <div class="video-portrait">
                     <iframe src="https://player.vimeo.com/video/1203103283?title=0&byline=0&portrait=0&badge=0&autopause=0&player_id=0&app_id=58479&loop=1" allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share" referrerpolicy="strict-origin-when-cross-origin" title="02 - YardSaleBigAl_9x16_Unslated_mp4_MASTER"></iframe>
                 </div>
-                <img class="image-portrait" src="images/heisman-yard-sale/bigal-almost-there.jpg" alt="Almost There - Bryce Young signed Big Al plush giveaway">
-                <img class="image-portrait" src="images/heisman-yard-sale/bigal-got-it.jpg" alt="Got It - Bryce Young signed Big Al plush giveaway">
+                <div class="yard-sale-images">
+                    <img class="image-portrait" src="images/heisman-yard-sale/bigal-almost-there.jpg" alt="Almost There - Bryce Young signed Big Al plush giveaway">
+                    <img class="image-portrait" src="images/heisman-yard-sale/bigal-got-it.jpg" alt="Got It - Bryce Young signed Big Al plush giveaway">
+                </div>
             </div>
             <div class="media-row">
                 <div class="video-portrait">
                     <iframe src="https://player.vimeo.com/video/1203103284?title=0&byline=0&portrait=0&badge=0&autopause=0&player_id=0&app_id=58479&loop=1" allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share" referrerpolicy="strict-origin-when-cross-origin" title="01 - YardSaleBoomer_9x16_Unslated_mp4_MASTER"></iframe>
                 </div>
-                <img class="image-portrait" src="images/heisman-yard-sale/boomer-almost-there.jpg" alt="Almost There - Baker Mayfield signed apron giveaway">
-                <img class="image-portrait" src="images/heisman-yard-sale/boomer-got-it.jpg" alt="Got It - Baker Mayfield signed apron giveaway">
+                <div class="yard-sale-images">
+                    <img class="image-portrait" src="images/heisman-yard-sale/boomer-almost-there.jpg" alt="Almost There - Baker Mayfield signed apron giveaway">
+                    <img class="image-portrait" src="images/heisman-yard-sale/boomer-got-it.jpg" alt="Got It - Baker Mayfield signed apron giveaway">
+                </div>
             </div>
 
             <p class="section-label">Zillow Listing</p>
