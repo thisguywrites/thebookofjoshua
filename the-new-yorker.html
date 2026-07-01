@@ -424,10 +424,23 @@
         }
         @media (max-width: 768px) {
             .cartoon-card {
-                width: 180px;
-                margin: -10px -14px;
+                width: 155px;
+                margin: -4px -8px;
             }
-            .cartoon-card img { height: 135px; }
+            .cartoon-card img { height: 116px; }
+            .cartoon-caption {
+                font-size: 10px;
+                line-height: 1.3;
+                padding: 8px 2px 4px;
+            }
+            /* Smaller rotation angles than desktop so the tilted card's
+               bounding box doesn't push text past the narrow viewport edge. */
+            .cartoon-card:nth-child(6n+1) { transform: rotate(-2deg); }
+            .cartoon-card:nth-child(6n+2) { transform: rotate(2deg); }
+            .cartoon-card:nth-child(6n+3) { transform: rotate(-1.5deg); }
+            .cartoon-card:nth-child(6n+4) { transform: rotate(2.5deg); }
+            .cartoon-card:nth-child(6n+5) { transform: rotate(-2.5deg); }
+            .cartoon-card:nth-child(6n+6) { transform: rotate(1deg); }
         }
 
         .media-placeholder.video {
