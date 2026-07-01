@@ -582,11 +582,31 @@
 
             const SENTENCE_ENDERS = ['.', '!', '?'];
 
+            // Build a hidden <span> for a single character so the browser lays out
+            // the full, final text (and its line wrapping) immediately. "Typing"
+            // then only toggles opacity on already-positioned characters instead of
+            // mutating text length, which is what was causing words to reflow onto
+            // a different line mid-type.
+            function makeCharSpan(ch) {
+                const span = document.createElement('span');
+                span.style.opacity = '0';
+                span.textContent = ch;
+                return span;
+            }
+
             function typeHeading(onDone) {
+                const spans = [];
+                for (let i = 0; i < headingText.length; i++) {
+                    const span = makeCharSpan(headingText.charAt(i));
+                    h1Target.appendChild(span);
+                    spans.push(span);
+                }
+
                 let i = 0;
                 function next() {
-                    if (i < headingText.length) {
-                        h1Target.textContent += headingText.charAt(i);
+                    if (i < spans.length) {
+                        spans[i].style.opacity = '1';
+                        spans[i].insertAdjacentElement('afterend', h1Caret);
                         i++;
                         setTimeout(next, H1_DELAY);
                     } else {
@@ -597,49 +617,59 @@
             }
 
             function typeBio(onDone) {
-                let segIndex = 0;
-                let charIndex = 0;
-                let currentNode = null;
+                // Pre-render every character (and link) up front, hidden, so the
+                // paragraph's final wrapped layout is established before typing
+                // starts revealing characters.
+                const reveals = []; // { span, ch, link (optional) }
 
+                bioSegments.forEach(seg => {
+                    let container = bioTarget;
+                    let link = null;
+                    if (seg.type === 'link') {
+                        link = document.createElement('a');
+                        link.href = seg.href;
+                        link.target = seg.href.startsWith('http') ? '_blank' : '_self';
+                        if (seg.style) {
+                            link.style.cssText = seg.style;
+                            if (seg.className) link.className = seg.className;
+                        } else {
+                            link.style.color = '#000';
+                        }
+                        // Prevent clicking/hovering a link before its text is
+                        // actually visible.
+                        link.style.pointerEvents = 'none';
+                        bioTarget.appendChild(link);
+                        container = link;
+                    }
+
+                    for (let i = 0; i < seg.value.length; i++) {
+                        const ch = seg.value.charAt(i);
+                        const span = makeCharSpan(ch);
+                        container.appendChild(span);
+                        reveals.push({ span, ch, link });
+                    }
+                });
+
+                let idx = 0;
                 function next() {
-                    if (segIndex >= bioSegments.length) {
+                    if (idx >= reveals.length) {
                         onDone();
                         return;
                     }
 
-                    const seg = bioSegments[segIndex];
+                    const { span, ch, link } = reveals[idx];
+                    span.style.opacity = '1';
+                    span.insertAdjacentElement('afterend', bioCaret);
 
-                    if (charIndex === 0) {
-                        if (seg.type === 'link') {
-                            currentNode = document.createElement('a');
-                            currentNode.href = seg.href;
-                            currentNode.target = seg.href.startsWith('http') ? '_blank' : '_self';
-                            if (seg.style) {
-                                currentNode.style.cssText = seg.style;
-                                if (seg.className) currentNode.className = seg.className;
-                            } else {
-                                currentNode.style.color = '#000';
-                            }
-                            bioTarget.appendChild(currentNode);
-                        } else {
-                            currentNode = document.createTextNode('');
-                            bioTarget.appendChild(currentNode);
-                        }
+                    const isLastCharOfLink = link && (idx + 1 >= reveals.length || reveals[idx + 1].link !== link);
+                    if (isLastCharOfLink) {
+                        link.style.pointerEvents = '';
                     }
+                    idx++;
 
-                    if (charIndex < seg.value.length) {
-                        const ch = seg.value.charAt(charIndex);
-                        currentNode.textContent += ch;
-                        charIndex++;
-
-                        const nextChar = seg.value.charAt(charIndex);
-                        const isSentenceEnd = SENTENCE_ENDERS.includes(ch) && (nextChar === ' ' || nextChar === '');
-                        setTimeout(next, isSentenceEnd ? nextPause() : CHAR_DELAY);
-                    } else {
-                        segIndex++;
-                        charIndex = 0;
-                        setTimeout(next, CHAR_DELAY);
-                    }
+                    const nextCh = idx < reveals.length ? reveals[idx].ch : '';
+                    const isSentenceEnd = SENTENCE_ENDERS.includes(ch) && (nextCh === ' ' || nextCh === '');
+                    setTimeout(next, isSentenceEnd ? nextPause() : CHAR_DELAY);
                 }
                 next();
             }
