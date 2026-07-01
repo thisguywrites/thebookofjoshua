@@ -198,14 +198,7 @@
             transition: opacity 0.25s ease, transform 0.25s ease, visibility 0.25s;
         }
 
-        @media (hover: hover) {
-            .clippy-wrapper:hover .speech-bubble {
-                opacity: 1;
-                visibility: visible;
-                transform: translateY(0);
-            }
-        }
-        .clippy-wrapper.touch-bubble-open .speech-bubble {
+        .clippy-wrapper:hover .speech-bubble {
             opacity: 1;
             visibility: visible;
             transform: translateY(0);
@@ -594,28 +587,49 @@
             }, { passive: true });
 
             // ── Mobile: tap Clippy to open/close speech bubble ────────────
+            // Sets inline styles directly (rather than toggling a class) so
+            // this always wins over CSS -- including the persistent :hover
+            // state some mobile browsers apply after a tap, which a
+            // class-based toggle alone couldn't override. Desktop's CSS
+            // :hover behavior is completely untouched by this.
             (function() {
                 const wrapper = clippyImg.closest('.clippy-wrapper');
                 if (!wrapper) return;
+                const bubble = wrapper.querySelector('.speech-bubble');
+                if (!bubble) return;
                 let bubbleOpen = false;
+
+                function showBubble() {
+                    bubble.style.opacity = '1';
+                    bubble.style.visibility = 'visible';
+                    bubble.style.transform = 'translateY(0)';
+                    bubbleOpen = true;
+                }
+
+                function hideBubble() {
+                    // Explicit values, not a reset to '', so this beats a
+                    // lingering :hover state some mobile browsers apply
+                    // after a tap (CSS cascade would otherwise win).
+                    bubble.style.opacity = '0';
+                    bubble.style.visibility = 'hidden';
+                    bubble.style.transform = 'translateY(12px)';
+                    bubbleOpen = false;
+                }
 
                 // Tap Clippy: toggle bubble
                 wrapper.addEventListener('touchend', (e) => {
                     e.stopPropagation();
                     if (bubbleOpen) {
-                        wrapper.classList.remove('touch-bubble-open');
-                        bubbleOpen = false;
+                        hideBubble();
                     } else {
-                        wrapper.classList.add('touch-bubble-open');
-                        bubbleOpen = true;
+                        showBubble();
                     }
                 }, { passive: true });
 
                 // Tap anywhere else: close bubble
                 document.addEventListener('touchend', () => {
                     if (bubbleOpen) {
-                        wrapper.classList.remove('touch-bubble-open');
-                        bubbleOpen = false;
+                        hideBubble();
                     }
                 }, { passive: true });
             })();
