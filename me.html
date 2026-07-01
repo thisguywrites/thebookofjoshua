@@ -311,12 +311,17 @@
         }
 
         .me-header {
+            position: relative;
             text-align: center;
             margin-bottom: 40px;
         }
         .me-header h1 {
             font-size: 64px;
             font-weight: normal;
+            line-height: 1.2;
+            /* Guarantees a real line box (and thus correct caret centering)
+               even before any characters have been typed into it. */
+            min-height: 1.2em;
         }
 
         /* Blinking caret - scales proportionally with parent font-size */
@@ -328,6 +333,15 @@
             margin-left: 0.06em;
             vertical-align: middle;
             animation: blink 1s step-end infinite;
+        }
+
+        /* Used for the me.html typing carets: taken out of the text flow so
+           the caret's own width can never tip a line into wrapping and
+           reflow already-typed characters. Position is set via JS to track
+           the last revealed character. */
+        .caret-floating {
+            position: absolute;
+            margin-left: 0;
         }
 
         @keyframes blink {
@@ -382,6 +396,9 @@
             top: 0;
             left: 0;
             width: 100%;
+            /* Guarantees a real line box (and thus correct caret centering)
+               even before any characters have been typed into it. */
+            min-height: 1.8em;
         }
 
         .me-awards {
@@ -457,7 +474,7 @@
 
         
         <div class="me-header">
-            <h1><span id="me-h1-text"></span><span class="caret" id="caret-h1"></span></h1>
+            <h1><span id="me-h1-text"></span><span class="caret caret-floating" id="caret-h1"></span></h1>
         </div>
 
         <div class="me-portrait">
@@ -483,7 +500,7 @@
 
         <div class="me-bio-wrapper">
             <p class="me-bio me-bio-spacer" aria-hidden="true">The only thing I wanted to be more than a doctor was an artist. So I became a writer instead. Now I'm a Texas-born, New England-bred barroom socialite, chronic gambler and former <a href="https://tojoshuablanco.wixsite.com/student" style="color:#0000EE;text-decoration:none;" class="bio-here-link">professional student</a> trying to find the right balance between eating too much halal and not doing enough yoga. Contrary to popular belief, the &ldquo;ua&rdquo; in my name is not silent. Currently my biggest challenge in life is teaching my puppy the floor is not a bathroom. And yes, I know how to fly airplanes. Sort of. Call me if you want my phone to start quacking. Email if you want it to whistle. To see my resume, press&nbsp;<a href="resume.html" style="color:#0000EE;text-decoration:none;">here</a>.</p>
-            <p class="me-bio me-bio-typed"><span id="me-bio-text"></span><span class="caret" id="caret-bio" style="display:none;"></span></p>
+            <p class="me-bio me-bio-typed"><span id="me-bio-text"></span><span class="caret caret-floating" id="caret-bio" style="display:none;"></span></p>
         </div>
 
         <div class="me-awards">
@@ -594,6 +611,19 @@
                 return span;
             }
 
+            // Position a floating caret at the trailing edge of `span`, without
+            // touching the document flow (so the caret's own width can never
+            // tip a line into wrapping and reflow already-typed text).
+            function positionCaret(caret, span) {
+                const ancestor = caret.offsetParent || span.offsetParent;
+                if (!ancestor) return;
+                const spanRect = span.getBoundingClientRect();
+                const ancestorRect = ancestor.getBoundingClientRect();
+                const caretRect = caret.getBoundingClientRect();
+                caret.style.left = (spanRect.right - ancestorRect.left) + 'px';
+                caret.style.top = (spanRect.top - ancestorRect.top + (spanRect.height - caretRect.height) / 2) + 'px';
+            }
+
             function typeHeading(onDone) {
                 const spans = [];
                 for (let i = 0; i < headingText.length; i++) {
@@ -606,7 +636,7 @@
                 function next() {
                     if (i < spans.length) {
                         spans[i].style.opacity = '1';
-                        spans[i].insertAdjacentElement('afterend', h1Caret);
+                        positionCaret(h1Caret, spans[i]);
                         i++;
                         setTimeout(next, H1_DELAY);
                     } else {
@@ -659,7 +689,7 @@
 
                     const { span, ch, link } = reveals[idx];
                     span.style.opacity = '1';
-                    span.insertAdjacentElement('afterend', bioCaret);
+                    positionCaret(bioCaret, span);
 
                     const isLastCharOfLink = link && (idx + 1 >= reveals.length || reveals[idx + 1].link !== link);
                     if (isLastCharOfLink) {
@@ -674,11 +704,28 @@
                 next();
             }
 
+            // Place a caret at the leading edge of an (empty) target element,
+            // for the moment before any characters have been revealed yet.
+            function positionCaretAtStart(caret, target) {
+                const ancestor = caret.offsetParent || target.offsetParent;
+                if (!ancestor) return;
+                const targetRect = target.getBoundingClientRect();
+                // An empty inline span has zero height, so use the parent
+                // block (which always has real line-height) for vertical sizing.
+                const heightRefRect = target.parentElement.getBoundingClientRect();
+                const ancestorRect = ancestor.getBoundingClientRect();
+                const caretRect = caret.getBoundingClientRect();
+                caret.style.left = (targetRect.left - ancestorRect.left) + 'px';
+                caret.style.top = (heightRefRect.top - ancestorRect.top + (heightRefRect.height - caretRect.height) / 2) + 'px';
+            }
+
             function startTyping() {
                 bioCaret.style.display = 'none';
+                positionCaretAtStart(h1Caret, h1Target);
                 typeHeading(() => {
                     h1Caret.style.display = 'none';
                     bioCaret.style.display = 'inline-block';
+                    positionCaretAtStart(bioCaret, bioTarget);
                     setTimeout(() => {
                         typeBio(() => {
                             // typing finished; leave the bio caret blinking
@@ -716,6 +763,7 @@
                         p.style.transition = 'none';
                     });
                 } else {
+                    positionCaretAtStart(h1Caret, h1Target);
                     document.addEventListener('stickFigureDrawn', () => {
                         setTimeout(startTyping, 200);
                     }, { once: true });
