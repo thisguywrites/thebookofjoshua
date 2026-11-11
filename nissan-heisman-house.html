@@ -852,7 +852,7 @@
             <p class="section-label">…And if you still don't think it's real</p>
             <div style="display:flex;justify-content:center;margin-bottom:60px;">
                 <div style="border-radius:20px;overflow:hidden;box-shadow:0 16px 48px rgba(0,0,0,0.22);flex-shrink:0;">
-                    <iframe height="578" width="325" src="https://www.tiktok.com/player/v1/7276095443237391659?embed_from=webapp_share&music_info=1&description=1&autoplay=1&muted=1" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; fullscreen; gyroscope; picture-in-picture; web-share" title="Exclusive look into the Heisman House with @Nissan USA 👀 🏡 #nissanpartner #nissanheismanhouse" allowfullscreen></iframe>
+                    <iframe id="heisman-tiktok-embed" height="578" width="325" src="https://www.tiktok.com/player/v1/7276095443237391659?embed_from=webapp_share&music_info=1&description=1&autoplay=1&muted=1" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; fullscreen; gyroscope; picture-in-picture; web-share" title="Exclusive look into the Heisman House with @Nissan USA 👀 🏡 #nissanpartner #nissanheismanhouse" allowfullscreen></iframe>
                 </div>
             </div>
         </div>
@@ -1038,6 +1038,21 @@
             })();
         }
     </script>
+
+        <!-- TikTok embed refresh: browsers can serve a cached copy of the
+             iframe's response on refresh or back/forward navigation, which
+             plays blank. Forcing a fresh URL on every pageshow (including
+             bfcache restores) guarantees a real network request each time. -->
+        <script>
+        (function() {
+            var frame = document.getElementById('heisman-tiktok-embed');
+            if (!frame) return;
+            var baseSrc = frame.src;
+            window.addEventListener('pageshow', function() {
+                frame.src = baseSrc + (baseSrc.indexOf('?') > -1 ? '&' : '?') + '_cb=' + Date.now();
+            });
+        })();
+        </script>
 
         <!-- Vimeo loop initialiser -->
         <script>
